@@ -54,3 +54,35 @@ Valid Tripple Subscription
     Should Be Equal As Strings  ${received1}  ${msg}
     Should Be Equal As Strings  ${received2}  ${msg}
     Should Be Equal As Strings  ${received3}  ${msg}
+
+Valid Double Publish
+    ${publisher1}=       Get Publisher
+    ${publisher2}=       Get Publisher
+    Launch publisher	 ${publisher1}  ${GOD_TOKEN}  ${room}
+    Launch publisher	 ${publisher2}  ${GOD_TOKEN}  ${room}
+
+    ${subscriber1}=     Get Subscriber
+    ${subscriber2}=     Get Subscriber
+
+    Launch subscriber   ${subscriber1}  ${GOD_TOKEN}  ${room}  ${tag}
+    Launch subscriber   ${subscriber2}  ${GOD_TOKEN}  ${room}  ${tag}
+
+    Sleep               1  for proper launches
+
+    Publish message     ${publisher1}  ${msg}
+    Publish message     ${publisher2}  ${msg}
+
+    ${received1}=       Get subscription message  ${subscriber1}
+    ${received2}=       Get subscription message  ${subscriber1}
+    ${received3}=       Get subscription message  ${subscriber2}
+    ${received4}=       Get subscription message  ${subscriber2}
+
+    Stop Publisher      ${publisher1}
+    Stop Publisher      ${publisher2}
+    Stop Subscriber     ${subscriber1}
+    Stop Subscriber    	${subscriber2}
+
+    Should Be Equal As Strings  ${received1}  ${msg}
+    Should Be Equal As Strings  ${received2}  ${msg}
+    Should Be Equal As Strings  ${received3}  ${msg}
+    Should Be Equal As Strings  ${received4}  ${msg}
