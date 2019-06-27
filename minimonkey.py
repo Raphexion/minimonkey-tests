@@ -5,6 +5,7 @@ from robot.api import logger
 protocol = '<BH'
 max_size = 3 + 2**16
 
+ERROR = 0
 AUTH = 1
 ENTER = 2
 PUBLISH = 3
@@ -17,13 +18,15 @@ def send_data(sock, code, data):
     sock.send(data.encode())
 
 
-def recv_data(sock):
-    data = sock.recv(max_size)
+def recv_data(sock, data_old=b''):
+    data_new = sock.recv(max_size)
+    data = data_old + data_new
+
     header = data[0:3]
     payload = data[3:]
     (code, size) = struct.unpack(protocol, header)
 
-    if size != len(payload):
-        logger.warn("malformat message")
+    if size > len(payload):
+        return recv_data(sock, data)
 
-    return code, payload
+    return code, payload[0:size], payload[size:]

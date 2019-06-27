@@ -21,6 +21,7 @@ class Publisher(Thread):
         self.mutex = Lock()
         self.last_error = ''
         self.messages = Queue()
+        self.extra = b''
 
     def set_host(self, host):
         self.host = host
@@ -52,14 +53,14 @@ class Publisher(Thread):
         sock.settimeout(1)
 
         send_data(sock, AUTH, self.token)
-        code, data = recv_data(sock)
+        code, data, self.extra = recv_data(sock, self.extra)
 
         if not data == b'logged in':
             self.log('failed to log in')
             return
 
         send_data(sock, ENTER, self.room)
-        code, data = recv_data(sock)
+        code, data, self.extra = recv_data(sock, self.extra)
 
         if not data == b'ok':
             self.log('failed to enter room')
@@ -75,7 +76,7 @@ class Publisher(Thread):
                     code, payload = self.messages.get()
                     logger.warn("publish {}".format(payload))
                     send_data(sock, code, payload)
-                    recv_data(sock)
+                    code, data, self.extra = recv_data(sock, self.extra)
 
             finally:
                 self.mutex.release()

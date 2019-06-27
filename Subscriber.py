@@ -21,6 +21,7 @@ class Subscriber(Thread):
         self.messages = Queue()
         self.mutex = Lock()
         self.last_error = ''
+        self.extra = b''
 
     def pop(self, seconds=10):
         res = None
@@ -54,21 +55,21 @@ class Subscriber(Thread):
         sock.settimeout(1)
 
         send_data(sock, AUTH, self.token)
-        code, data = recv_data(sock)
+        code, data, self.extra = recv_data(sock, self.extra)
 
         if not data == b'logged in':
             self.log('failed to log in')
             return
 
         send_data(sock, ENTER, self.room)
-        code, data = recv_data(sock)
+        code, data, self.extra = recv_data(sock, self.extra)
 
         if not data == b'ok':
             self.log('failed to enter room')
             return
 
         send_data(sock, SUBSCRIBE, self.tag)
-        code, data = recv_data(sock)
+        code, data, self.extra = recv_data(sock, self.extra)
 
         if not data == b'ok':
             self.log('failed to subscribe')
@@ -76,8 +77,8 @@ class Subscriber(Thread):
 
         while not self.stop_thread:
             try:
-                (enter, tag) = recv_data(sock)
-                (publish, data) = recv_data(sock)
+                enter, tag, self.extra = recv_data(sock, self.extra)
+                publish, data, self.extra = recv_data(sock, self.extra)
 
                 self.mutex.acquire()
                 try:
