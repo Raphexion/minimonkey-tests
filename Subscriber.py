@@ -7,6 +7,7 @@ from robot.api import logger
 from threading import Thread, Lock
 import socket
 import time
+from queue import Queue
 
 
 class Subscriber(Thread):
@@ -17,7 +18,7 @@ class Subscriber(Thread):
         self.room = room
         self.tag = tag
         self.stop_thread = False
-        self.messages = []
+        self.messages = Queue()
         self.mutex = Lock()
         self.last_error = ''
 
@@ -29,8 +30,8 @@ class Subscriber(Thread):
             seconds -= 1
             self.mutex.acquire()
             try:
-                if self.messages:
-                    res = self.messages.pop()
+                if not self.messages.empty():
+                    res = self.messages.get()
                     break
                 else:
                     pass
@@ -80,7 +81,7 @@ class Subscriber(Thread):
 
                 self.mutex.acquire()
                 try:
-                    self.messages.append(data.decode())
+                    self.messages.put(data.decode())
                 finally:
                     self.mutex.release()
             except socket.timeout:
