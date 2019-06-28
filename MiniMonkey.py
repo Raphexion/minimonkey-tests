@@ -13,6 +13,13 @@ ENTER = 2
 PUBLISH = 3
 SUBSCRIBE = 4
 
+ADD_ADMIN = 10
+REVOKE_ADMIN = 11
+ADD_PUBLISH = 12
+REVOKE_PUBLISH = 13
+ADD_SUBSCRIBE = 14
+REVOKE_SUBSCRIBE = 15
+
 
 class MiniMonkey(Thread):
     def __init__(self, host='localhost'):
@@ -37,6 +44,24 @@ class MiniMonkey(Thread):
 
     def subscribe(self, tag):
         self.send(SUBSCRIBE, tag)
+
+    def add_admin(self, token):
+        self.send(ADD_ADMIN, tag)
+
+    def revoke_admin(self, token):
+        self.send(REVOKE_ADMIN, tag)
+
+    def add_publish(self, token):
+        self.send(ADD_PUBLISH, tag)
+
+    def revoke_publish(self, token):
+        self.send(REVOKE_PUBLISH, tag)
+
+    def add_subscribe(self, token):
+        self.send(ADD_SUBSCRIBE, tag)
+
+    def revoke_subscribe(self, token):
+        self.send(REVOKE_SUBSCRIBE, tag)
 
     def send(self, code, payload):
         self.out_mutex.acquire()
