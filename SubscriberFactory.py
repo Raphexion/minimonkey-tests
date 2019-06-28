@@ -30,4 +30,4 @@ def set_subscriber_tag(subscriber, tag):
 
 
 def get_subscription_message(subscriber):
-    return subscriber.pop()
+    return subscriber.recv()

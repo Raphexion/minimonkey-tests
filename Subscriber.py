@@ -1,92 +1,62 @@
-from minimonkey import (send_data,
-                        recv_data,
-                        AUTH,
-                        ENTER,
-                        SUBSCRIBE)
+from MiniMonkey import MiniMonkey
 from robot.api import logger
-from threading import Thread, Lock
-import socket
 import time
-from queue import Queue
 
 
-class Subscriber(Thread):
+class Subscriber:
     def __init__(self, host='localhost', token='', room='', tag=''):
-        Thread.__init__(self)
-        self.host = host
+        self.minimonkey = MiniMonkey(host)
         self.token = token
         self.room = room
         self.tag = tag
         self.stop_thread = False
-        self.messages = Queue()
-        self.mutex = Lock()
         self.last_error = ''
-        self.extra = b''
 
-    def pop(self, seconds=10):
-        res = None
+    def _recv(self, seconds=5):
+        code, payload = None, None
+        for _ in range(seconds*10):
+            time.sleep(0.1)
+            code, payload = self.minimonkey.recv()
 
-        for _ in range(seconds):
-            time.sleep(1)
-            seconds -= 1
-            self.mutex.acquire()
-            try:
-                if not self.messages.empty():
-                    res = self.messages.get()
-                    break
-                else:
-                    pass
-            finally:
-                self.mutex.release()
+            if code:
+                break
 
-        return res
+        return code, payload
+
+    def recv(self):
+        _code1, _tag = self._recv()
+        _code2, msg = self._recv()
+
+        return msg
 
     def log(self, msg):
         logger.error(msg)
         self.last_error = msg
 
     def stop(self):
-        self.stop_thread = True
+        self.minimonkey.stop()
 
-    def run(self):
-        logger.warn('subscriber started')
-        sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-        sock.connect((self.host, 1773))
-        sock.settimeout(1)
+    def start(self):
+        logger.debug('subscriber started')
+        self.minimonkey.start()
 
-        send_data(sock, AUTH, self.token)
-        code, data, self.extra = recv_data(sock, self.extra)
-
+        # Authenticate
+        self.minimonkey.auth(self.token)
+        code, data = self._recv()
         if not data == b'logged in':
             self.log('failed to log in')
             return
 
-        send_data(sock, ENTER, self.room)
-        code, data, self.extra = recv_data(sock, self.extra)
-
+        # Enter Room
+        self.minimonkey.enter(self.room)
+        code, data = self._recv()
         if not data == b'ok':
             self.log('failed to enter room')
             return
 
-        send_data(sock, SUBSCRIBE, self.tag)
-        code, data, self.extra = recv_data(sock, self.extra)
-
+        # Subscribe to messages
+        self.minimonkey.subscribe(self.tag)
+        code, data = self._recv()
         if not data == b'ok':
             self.log('failed to subscribe')
             return
-
-        while not self.stop_thread:
-            try:
-                enter, tag, self.extra = recv_data(sock, self.extra)
-                publish, data, self.extra = recv_data(sock, self.extra)
-
-                self.mutex.acquire()
-                try:
-                    self.messages.put(data.decode())
-                finally:
-                    self.mutex.release()
-            except socket.timeout:
-                pass
-
-            finally:
-                pass
