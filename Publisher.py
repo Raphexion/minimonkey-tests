@@ -8,12 +8,13 @@ class Publisher:
         self.minimonkey = MiniMonkey(host)
         self.token = token
         self.room = room
+        self.last_error = b''
 
     def publish(self, msg):
         self.minimonkey.publish(msg)
 
     def log(self, msg):
-        logger.error(msg)
+        logger.debug(msg)
         self.last_error = msg
 
     def recv(self, seconds=5):

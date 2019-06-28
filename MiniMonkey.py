@@ -46,22 +46,22 @@ class MiniMonkey(Thread):
         self.send(SUBSCRIBE, tag)
 
     def add_admin(self, token):
-        self.send(ADD_ADMIN, tag)
+        self.send(ADD_ADMIN, token)
 
     def revoke_admin(self, token):
-        self.send(REVOKE_ADMIN, tag)
+        self.send(REVOKE_ADMIN, token)
 
     def add_publish(self, token):
-        self.send(ADD_PUBLISH, tag)
+        self.send(ADD_PUBLISH, token)
 
     def revoke_publish(self, token):
-        self.send(REVOKE_PUBLISH, tag)
+        self.send(REVOKE_PUBLISH, token)
 
     def add_subscribe(self, token):
-        self.send(ADD_SUBSCRIBE, tag)
+        self.send(ADD_SUBSCRIBE, token)
 
     def revoke_subscribe(self, token):
-        self.send(REVOKE_SUBSCRIBE, tag)
+        self.send(REVOKE_SUBSCRIBE, token)
 
     def send(self, code, payload):
         self.out_mutex.acquire()

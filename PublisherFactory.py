@@ -27,3 +27,7 @@ def set_publisher_room(publisher, room):
 
 def publish_message(publisher, msg):
     publisher.publish(msg)
+
+
+def last_publisher_error(publisher):
+    return publisher.last_error
