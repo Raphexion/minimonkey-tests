@@ -7,5 +7,5 @@ Getting Started
 ---------------
 
 ```
-robot --pythonpath=. simple_pub_sub.robot
+robot --pythonpath=libraries/ tests/
 ```

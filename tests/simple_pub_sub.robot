@@ -1,8 +1,8 @@
 *** Settings ***
 Documentation     A minimal pub sub flow
-Resource          tokens.robot
-Resource          subscriber.robot
-Resource          publisher.robot
+Resource          ../variables/tokens.robot
+Resource          ../keywords/subscriber.robot
+Resource          ../keywords/publisher.robot
 
 *** Variables ***
 ${room}     themeratures
