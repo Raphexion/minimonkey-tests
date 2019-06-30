@@ -43,20 +43,23 @@ class Subscriber:
         # Authenticate
         self.minimonkey.auth(self.token)
         code, data = self._recv()
-        if not data == b'logged in':
-            self.log('failed to log in')
+        if not data == b'login successful':
+            self.log(data)
+            self.log('failed to log in (subscriber)')
             return
 
         # Enter Room
         self.minimonkey.enter(self.room)
         code, data = self._recv()
-        if not data == b'ok':
-            self.log('failed to enter room')
+        if not data == b'enter successful':
+            self.log(data)
+            self.log('failed to enter room (subscriber)')
             return
 
         # Subscribe to messages
         self.minimonkey.subscribe(self.tag)
         code, data = self._recv()
-        if not data == b'ok':
+        if not data == b'subscribe successful':
+            self.log(data)
             self.log('failed to subscribe')
             return
