@@ -7,18 +7,20 @@ import socket
 protocol = '<BH'
 max_size = 3 + 2**16
 
-ERROR = 0
-AUTH = 1
-ENTER = 2
-PUBLISH = 3
-SUBSCRIBE = 4
+ERROR = 0x0
+AUTH = 0x1
+ENTER = 0x2
+PUBLISH = 0x3
+SUBSCRIBE = 0x4
 
-ADD_ADMIN = 10
-REVOKE_ADMIN = 11
-ADD_PUBLISH = 12
-REVOKE_PUBLISH = 13
-ADD_SUBSCRIBE = 14
-REVOKE_SUBSCRIBE = 15
+ADD_ADMIN = 0x10
+REVOKE_ADMIN = 0x11
+ADD_PUBLISH = 0x12
+REVOKE_PUBLISH = 0x13
+ADD_SUBSCRIBE = 0x14
+REVOKE_SUBSCRIBE = 0x15
+ADD_LOGIN = 0x16
+REVOKE_LOGIN = 0x17
 
 
 class MiniMonkey(Thread):
@@ -62,6 +64,12 @@ class MiniMonkey(Thread):
 
     def revoke_subscribe(self, token):
         self.send(REVOKE_SUBSCRIBE, token)
+
+    def add_login(self, token):
+        self.send(ADD_LOGIN, token)
+
+    def revoke_login(self, token):
+        self.send(REVOKE_LOGIN, token)
 
     def send(self, code, payload):
         self.out_mutex.acquire()
