@@ -21,6 +21,8 @@ ADD_SUBSCRIBE = 0x14
 REVOKE_SUBSCRIBE = 0x15
 ADD_LOGIN = 0x16
 REVOKE_LOGIN = 0x17
+LINK_ROOM = 0x30
+UNLINK_ROOM = 0x31
 
 
 class MiniMonkey(Thread):
@@ -70,6 +72,12 @@ class MiniMonkey(Thread):
 
     def revoke_login(self, token):
         self.send(REVOKE_LOGIN, token)
+
+    def link_room(self, room):
+        self.send(LINK_ROOM, room)
+
+    def unlink_room(self, room):
+        self.send(UNLINK_ROOM, room)
 
     def send(self, code, payload):
         self.out_mutex.acquire()
