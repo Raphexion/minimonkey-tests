@@ -10,12 +10,14 @@ class Admin:
         self.room = room
         self.last_error = b''
 
-    def link_room(self, room):
-        self.minimonkey.link_room(room)
-
     def link_rooms(self, src_room, dst_room):
         self.minimonkey.enter(src_room)
+        _, data = self.recv()
+        assert data == b'enter successful'
+
         self.minimonkey.link_room(dst_room)
+        _, data = self.recv()
+        assert data == b'link successful'
 
     def log(self, msg):
         logger.debug(msg)
@@ -44,11 +46,4 @@ class Admin:
         code, data = self.recv()
         if not data == b'login successful':
             self.log('failed to log in')
-            return
-
-        # Enter Room
-        self.minimonkey.enter(self.room)
-        code, data = self.recv()
-        if not data == b'enter successful':
-            self.log('failed to enter room')
             return
