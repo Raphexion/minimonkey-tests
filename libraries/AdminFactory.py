@@ -29,5 +29,9 @@ def link_room(admin, room):
     admin.link_room(room)
 
 
+def link_rooms(admin, src_room, dst_room):
+    admin.link_rooms(src_room, dst_room)
+
+
 def last_admin_error(admin):
     return admin.last_error

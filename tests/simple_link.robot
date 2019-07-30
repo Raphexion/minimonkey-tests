@@ -17,7 +17,7 @@ ${msg2}               temp2abc
 Valid Single Link
     ${admin}=           Get admin
     Launch Admin        ${admin}  ${GOD_TOKEN}  ${original_room1}
-    Link Room           ${admin}  ${linked_room}
+    Link Rooms           ${admin}  ${original_room1}  ${linked_room}
 
     ${publisher}=       Get Publisher
     Launch publisher    ${publisher}  ${GOD_TOKEN}  ${original_room1}
@@ -35,3 +35,4 @@ Valid Single Link
     Stop Subscriber     ${subscriber}
 
     Should Be Equal As Strings  ${received}  ${msg1}
+

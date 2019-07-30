@@ -13,6 +13,10 @@ class Admin:
     def link_room(self, room):
         self.minimonkey.link_room(room)
 
+    def link_rooms(self, src_room, dst_room):
+        self.minimonkey.enter(src_room)
+        self.minimonkey.link_room(dst_room)
+
     def log(self, msg):
         logger.debug(msg)
         self.last_error = msg
