@@ -15,7 +15,8 @@ def publish(msg, room, token):
     publisher.start()
     publisher.publish(msg)
     _, data = publisher.recv()
-    assert data == b'publish successful'
+    if not data == b'publish successful':
+        raise Exception(data)
     publisher.stop()
 
 

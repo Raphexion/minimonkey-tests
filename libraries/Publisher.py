@@ -38,9 +38,11 @@ class Publisher:
         # Authenticate
         self.minimonkey.auth(self.token)
         code, data = self.recv()
-        assert data == b'login successful'
+        if not data == b'login successful':
+            raise Exception(data)
 
         # Enter Room
         self.minimonkey.enter(self.room)
         code, data = self.recv()
-        assert data == b'enter successful'
+        if not data == b'enter successful':
+            raise Exception(data)

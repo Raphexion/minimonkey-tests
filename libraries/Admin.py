@@ -13,11 +13,13 @@ class Admin:
     def link_rooms(self, src_room, dst_room):
         self.minimonkey.enter(src_room)
         _, data = self.recv()
-        assert data == b'enter successful'
+        if not data == b'enter successful':
+            raise Exception(data)
 
         self.minimonkey.link_room(dst_room)
         _, data = self.recv()
-        assert data == b'link successful'
+        if not data == b'link successful':
+            raise Exception(data)
 
     def log(self, msg):
         logger.debug(msg)
