@@ -38,13 +38,9 @@ class Publisher:
         # Authenticate
         self.minimonkey.auth(self.token)
         code, data = self.recv()
-        if not data == b'login successful':
-            self.log('failed to log in')
-            return
+        assert data == b'login successful'
 
         # Enter Room
         self.minimonkey.enter(self.room)
         code, data = self.recv()
-        if not data == b'enter successful':
-            self.log('failed to enter room')
-            return
+        assert data == b'enter successful'
